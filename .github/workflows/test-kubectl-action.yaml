@@ -60,7 +60,7 @@ jobs:
         id: setup-kubectl
         uses: ./
         with:
-          kubectl-version: v1.24.4
+          kubectlVersion: v1.24.4
 
       - name: Check output and installPath
         run: |

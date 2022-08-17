@@ -1,0 +1,18 @@
+name: setup-kubectl
+description: 'Install a specific version of kubectl and plugins via krew'
+branding:
+  icon: 'package'
+  color: 'blue'
+author: Marco Franssen
+inputs:
+  kubectlVersion:
+    description: >-
+      The kubectl version you want to use (defaults to latest stable).
+    required: false
+    default: stable
+outputs:
+  kubectl-version:
+    description: 'The kubectl version that was installed.'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
