@@ -1,9 +1,10 @@
 import { platform, arch } from "os";
+import { createHash } from "crypto";
 import { dirname } from "path";
-import { mkdir, rename } from "fs/promises";
+import { mkdir, readFile, rename } from "fs/promises";
 import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
-import fetch from "node-fetch"
+import fetch, { RequestInfo } from "node-fetch";
 
 export async function setupKubectl() {
   const kubectlVersion = await getVersion(core.getInput("kubectlVersion"));
@@ -16,14 +17,12 @@ export async function setupKubectl() {
   const a = mapArch(osArch);
 
   const downloadURL = `https://storage.googleapis.com/kubernetes-release/release/${kubectlVersion}/bin/${p}/${a}/kubectl`;
+  const checksumURL = `https://storage.googleapis.com/kubernetes-release/release/${kubectlVersion}/bin/${p}/${a}/kubectl.sha256`;
 
   const cachedPath =
     tc.find("kubectl", kubectlVersion, osArch) ||
     (await (async () => {
-      const pathToCLI = await tc.downloadTool(downloadURL);
-      if (!pathToCLI) {
-        throw new Error(`Unable to download kubectl from ${downloadURL}`);
-      }
+      const pathToCLI = await downloadCLI(downloadURL, checksumURL);
       const dir = await mkdir(`${dirname(pathToCLI)}/kubectl-${kubectlVersion}`, {recursive: true})
       await rename(pathToCLI, `${dir}/kubectl`)
       return tc.cacheDir(`${dir}`, "kubectl", kubectlVersion, osArch);
@@ -65,4 +64,39 @@ async function getVersion(version: string) {
 
       return version;
   }
+}
+
+async function downloadCLI(url: string, checksumURL: RequestInfo) {
+  const pathToCLI = await tc.downloadTool(url);
+  const response = await fetch(checksumURL);
+
+  if (response.status != 200) {
+    response.headers.forEach((v,k,p) =>
+      core.debug(`${k}: ${v}`)
+    )
+    core.debug(response.status + response.statusText)
+    core.debug(await response.text())
+    throw new Error(`Unable to download checksum from ${checksumURL}`);
+  }
+
+  const checksum = await response.text();
+
+  if (!pathToCLI) {
+    throw new Error(`Unable to download kubectl from ${url}`);
+  }
+
+  const fileBuffer = await readFile(pathToCLI);
+  const hash = createHash("sha256");
+  hash.update(fileBuffer);
+
+  const hex = hash.digest("hex");
+  if (hex !== checksum) {
+    throw new Error(
+      `Checksum does not match, expected ${checksum}, got ${hex}`
+    );
+  }
+
+  core.debug(`Checksums matched: ${checksum}`)
+
+  return pathToCLI;
 }
