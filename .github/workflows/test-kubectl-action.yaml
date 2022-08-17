@@ -1,0 +1,72 @@
+name: Test setup-kubectl
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check-dist:
+    name: Check dist
+    runs-on: ubuntu-22.04
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3.0.2
+
+      - name: Setup Node
+        uses: actions/setup-node@v3.4.1
+        with:
+          node-version: '16'
+
+      - name: Setup yarn
+        run: npm install --location=global yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Check diff is up to date
+        run: |
+          yarn build
+          git diff --quiet -- dist || {
+            echo "::error::The ./dist is outdated, run 'yarn build' and commit"
+            exit 1
+          }
+
+  test:
+    name: Use setup-kubectl
+    runs-on: ubuntu-22.04
+
+    needs: [check-dist]
+
+    permissions:
+      contents: read
+
+    env:
+      AWS_CSM_ENABLED: 'true'
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3.0.2
+
+      - name: Setup Node
+        uses: actions/setup-node@v3.4.1
+        with:
+          node-version: '16'
+
+      - name: Setup kubectl
+        id: setup-kubectl
+        uses: ./
+        with:
+          kubectl-version: v1.24.4
+
+      - name: Check output and installPath
+        run: |
+          [ "${KUBECTL_VERSION}" == v1.24.4 ] || { echo >&2 "::error::Expected v1.24.4 to be installed."; }
+          hash kubectl 2>/dev/null || { echo >&2 "kubectl can not be found in the PATH."; exit 1; }
+
+          echo "::notice::Installed kubectl ${KUBECTL_VERSION} at $(which kubectl)"
+        env:
+          KUBECTL_VERSION: ${{ steps.setup-kubectl.outputs.kubectl-version }}
