@@ -1,7 +1,7 @@
 import { platform, arch } from "os";
 import { createHash } from "crypto";
 import { dirname } from "path";
-import { mkdir, readFile, rename } from "fs/promises";
+import { chmod, mkdir, readFile, rename } from "fs/promises";
 import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
 import fetch, { RequestInfo } from "node-fetch";
@@ -19,14 +19,19 @@ export async function setupKubectl() {
   const downloadURL = `https://storage.googleapis.com/kubernetes-release/release/${kubectlVersion}/bin/${p}/${a}/kubectl`;
   const checksumURL = `https://storage.googleapis.com/kubernetes-release/release/${kubectlVersion}/bin/${p}/${a}/kubectl.sha256`;
 
-  const cachedPath =
-    tc.find("kubectl", kubectlVersion, osArch) ||
-    (await (async () => {
-      const pathToCLI = await downloadCLI(downloadURL, checksumURL);
-      const dir = await mkdir(`${dirname(pathToCLI)}/kubectl-${kubectlVersion}`, {recursive: true})
-      await rename(pathToCLI, `${dir}/kubectl`)
-      return tc.cacheDir(`${dir}`, "kubectl", kubectlVersion, osArch);
-    })());
+  let cachedPath = tc.find("kubectl", kubectlVersion, osArch)
+
+  if (cachedPath) {
+    core.info(`Found kubectl ${kubectlVersion} in toolcache @ ${cachedPath}`);
+  } else {
+    core.info(`Attempting to download kubectl ${kubectlVersion}…`);
+    const pathToCLI = await downloadCLI(downloadURL, checksumURL);
+    const dir = `${dirname(pathToCLI)}/kubectl-${kubectlVersion}`
+    await mkdir(dir, { recursive: true })
+    await rename(pathToCLI, `${dir}/kubectl`)
+    await chmod(`${dir}/kubectl`, 0o755)
+    cachedPath = await tc.cacheDir(`${dir}`, "kubectl", kubectlVersion, osArch)
+  }
 
   core.addPath(cachedPath);
   core.setOutput("kubectl-version", kubectlVersion);
