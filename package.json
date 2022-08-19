@@ -1,6 +1,6 @@
 {
   "name": "setup-kubectl",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Install kubectl and optionally krew and plugins.",
   "main": "index.ts",
   "repository": "git@github.com:marcofranssen/setup-kubectl.git",
