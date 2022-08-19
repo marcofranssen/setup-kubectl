@@ -41,8 +41,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        # os: [ubuntu-22.04, macos-12, windows-2022]
-        os: [ubuntu-22.04, macos-12]
+        os: [ubuntu-22.04, macos-12, windows-2022]
         version: [v1.24.4, latest, stable]
         enablePlugins: [true, false]
 
