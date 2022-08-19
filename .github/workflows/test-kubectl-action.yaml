@@ -37,7 +37,16 @@ jobs:
 
   test:
     name: Use setup-kubectl
-    runs-on: ubuntu-22.04
+
+    strategy:
+      fail-fast: true
+      matrix:
+        # os: [ubuntu-22.04, macos-12, windows-2022]
+        os: [ubuntu-22.04, macos-12]
+        version: [v1.24.4, latest, stable]
+        enablePlugins: [true, false]
+
+    runs-on: ${{ matrix.os }}
 
     needs: [check-dist]
 
@@ -60,13 +69,18 @@ jobs:
         id: setup-kubectl
         uses: ./
         with:
-          kubectlVersion: v1.24.4
+          kubectlVersion: ${{ matrix.version }}
+          enablePlugins: ${{ matrix.enablePlugins }}
 
       - name: Check output and installPath
         run: |
-          [ "${KUBECTL_VERSION}" == v1.24.4 ] || { echo >&2 "::error::Expected v1.24.4 to be installed."; }
           hash kubectl 2>/dev/null || { echo >&2 "kubectl can not be found in the PATH."; exit 1; }
-
           echo "::notice::Installed kubectl ${KUBECTL_VERSION} at $(which kubectl)"
+
+          ${{ matrix.enablePlugins }} && {
+            hash kubectl-krew 2>/dev/null || { echo >&2 "kubectl-krew can not be found in the PATH."; exit 1; }
+            echo "::notice::Installed krew ${KREW_VERSION} at $(which kubectl-krew)"
+          } || true
         env:
           KUBECTL_VERSION: ${{ steps.setup-kubectl.outputs.kubectl-version }}
+          KREW_VERSION: ${{ steps.setup-kubectl.outputs.krew-version }}
