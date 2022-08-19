@@ -10,9 +10,16 @@ inputs:
       The kubectl version you want to use (defaults to latest stable).
     required: false
     default: stable
+  enablePlugins:
+    description: >-
+      Install krew to manage kubectl plugins (defaults to false).
+    required: false
+    default: 'false'
 outputs:
   kubectl-version:
     description: 'The kubectl version that was installed.'
+  krew-version:
+    description: 'The krew version that was installed.'
 runs:
   using: 'node16'
   main: 'dist/index.js'

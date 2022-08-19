@@ -1,10 +1,11 @@
 import { platform, arch } from "os";
-import { createHash } from "crypto";
 import { dirname } from "path";
-import { chmod, mkdir, readFile, rename } from "fs/promises";
+import { chmod, mkdir, rename } from "fs/promises";
 import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
-import fetch, { RequestInfo } from "node-fetch";
+import fetch from "node-fetch";
+import { mapOS, mapArch, download } from "./utils";
+import { setupKrew } from "./krew";
 
 export async function setupKubectl() {
   const kubectlVersion = await getVersion(core.getInput("kubectlVersion"));
@@ -25,7 +26,7 @@ export async function setupKubectl() {
     core.info(`Found kubectl ${kubectlVersion} in toolcache @ ${cachedPath}`);
   } else {
     core.info(`Attempting to download kubectl ${kubectlVersion}…`);
-    const pathToCLI = await downloadCLI(downloadURL, checksumURL);
+    const pathToCLI = await download(downloadURL, checksumURL);
     const dir = `${dirname(pathToCLI)}/kubectl-${kubectlVersion}`
     await mkdir(dir, { recursive: true })
     await rename(pathToCLI, `${dir}/kubectl`)
@@ -35,21 +36,10 @@ export async function setupKubectl() {
 
   core.addPath(cachedPath);
   core.setOutput("kubectl-version", kubectlVersion);
-}
 
-function mapOS(os: string) : string {
-  const mappings : Record<string, string> = {
-    win32: "windows",
-  };
-  return mappings[os] || os;
-}
-
-function mapArch(arch: string) : string {
-  const mappings : Record<string, string> = {
-    x32: "386",
-    x64: "amd64",
-  };
-  return mappings[arch] || arch;
+  if (core.getInput("enablePlugins")) {
+    await setupKrew();
+  }
 }
 
 async function getVersion(version: string) {
@@ -69,39 +59,4 @@ async function getVersion(version: string) {
 
       return version;
   }
-}
-
-async function downloadCLI(url: string, checksumURL: RequestInfo) {
-  const pathToCLI = await tc.downloadTool(url);
-  const response = await fetch(checksumURL);
-
-  if (response.status != 200) {
-    response.headers.forEach((v,k,p) =>
-      core.debug(`${k}: ${v}`)
-    )
-    core.debug(response.status + response.statusText)
-    core.debug(await response.text())
-    throw new Error(`Unable to download checksum from ${checksumURL}`);
-  }
-
-  const checksum = await response.text();
-
-  if (!pathToCLI) {
-    throw new Error(`Unable to download kubectl from ${url}`);
-  }
-
-  const fileBuffer = await readFile(pathToCLI);
-  const hash = createHash("sha256");
-  hash.update(fileBuffer);
-
-  const hex = hash.digest("hex");
-  if (hex !== checksum) {
-    throw new Error(
-      `Checksum does not match, expected ${checksum}, got ${hex}`
-    );
-  }
-
-  core.debug(`Checksums matched: ${checksum}`)
-
-  return pathToCLI;
 }

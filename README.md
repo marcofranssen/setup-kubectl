@@ -40,6 +40,20 @@ steps:
       kubectl-version: v1.24.4
 ```
 
+### Install krew
+
+Install `krew` allong with kubectl.
+
+```yaml
+steps:
+  - uses: marcofranssen/setup-kubectl@v0.1.0
+    with:
+      enable-plugins: true
+  - run: echo ${{ steps.kubectl.output.krew-version }}
+  - run: kubectl krew install aws-auth
+```
+
+
 [kubectl]: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/ "The Kubernetes CLI"
 [krew]: https://krew.sigs.k8s.io/ "Krew is the plugin manager for kubectl command-line tool."
 [krew-plugins]: https://krew.sigs.k8s.io/plugins/ "List of kubectl plugins distributed on the centralized krew-index."
