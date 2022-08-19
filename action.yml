@@ -1,4 +1,4 @@
-name: setup-kubectl
+name: setup-kubectl-action
 description: 'Install a specific version of kubectl and plugins via krew'
 branding:
   icon: 'package'
