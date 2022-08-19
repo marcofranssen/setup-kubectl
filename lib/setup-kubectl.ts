@@ -5,6 +5,7 @@ import { chmod, mkdir, readFile, rename } from "fs/promises";
 import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
 import fetch, { RequestInfo } from "node-fetch";
+import { mapOS, mapArch } from "./utils";
 
 export async function setupKubectl() {
   const kubectlVersion = await getVersion(core.getInput("kubectlVersion"));
@@ -35,21 +36,6 @@ export async function setupKubectl() {
 
   core.addPath(cachedPath);
   core.setOutput("kubectl-version", kubectlVersion);
-}
-
-function mapOS(os: string) : string {
-  const mappings : Record<string, string> = {
-    win32: "windows",
-  };
-  return mappings[os] || os;
-}
-
-function mapArch(arch: string) : string {
-  const mappings : Record<string, string> = {
-    x32: "386",
-    x64: "amd64",
-  };
-  return mappings[arch] || arch;
 }
 
 async function getVersion(version: string) {
