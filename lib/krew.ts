@@ -1,4 +1,4 @@
-import { platform, arch } from "os";
+import { platform, arch, homedir } from "os";
 import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
 import { mapOS, mapArch, download } from "./utils";
@@ -34,7 +34,7 @@ export async function setupKrew() {
 
 function installKrew(cachedPath: string, binary: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    core.addPath("${KREW_ROOT:-$HOME/.krew}/bin");
+    core.addPath(`${homedir()}/.krew/bin`);
     exec(`${cachedPath}/${binary} install krew`, (e) => {
       if (e) {
         return reject(e);
