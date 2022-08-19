@@ -10,7 +10,7 @@
     "build": "yarn build-main",
     "build-main": "ncc build -m -s --license licenses.txt",
     "build:watch": "ncc build -m -s --license licenses.txt -w",
-    "local-exec": "RUNNER_TEMP=.runner-temp RUNNER_TOOL_CACHE=.runner-cache INPUT_KUBECTLVERSION=stable node --enable-source-maps dist/index.js"
+    "local-exec": "RUNNER_TEMP=.runner-temp RUNNER_TOOL_CACHE=.runner-cache INPUT_KUBECTLVERSION=stable INPUT_ENABLEPLUGINS=true node --enable-source-maps dist/index.js"
   },
   "dependencies": {
     "@actions/artifact": "^1.1.0",
