@@ -15,11 +15,18 @@ inputs:
       Install krew to manage kubectl plugins (defaults to false).
     required: false
     default: 'false'
+  plugins:
+    description: >-
+      Install the given plugins (comma or space separated).
+    required: false
+    default: ''
 outputs:
   kubectl-version:
     description: 'The kubectl version that was installed.'
   krew-version:
     description: 'The krew version that was installed.'
+  krew-plugins:
+    description: 'The list of installed plugins (json serialized object).'
 runs:
   using: 'node16'
   main: 'dist/index.js'

@@ -10,6 +10,7 @@ import { setupKrew } from "./krew";
 export async function setupKubectl() {
   try {
     const kubectlVersion = await getVersion(core.getInput("kubectlVersion"));
+    const krewPlugins = getPlugins(core.getInput("plugins"));
 
     core.debug(`Installing kubectl ${kubectlVersion}…`);
 
@@ -44,7 +45,7 @@ export async function setupKubectl() {
     core.setOutput("kubectl-version", kubectlVersion);
 
     if (core.getInput("enablePlugins")) {
-      await setupKrew();
+      await setupKrew(krewPlugins);
     }
   } catch (e) {
     core.error(e as Error);
@@ -52,7 +53,11 @@ export async function setupKubectl() {
   }
 }
 
-async function getVersion(version: string) {
+function getPlugins(plugins: string): string[] {
+  return plugins.split(/,|\s/).filter((p) => p);
+}
+
+async function getVersion(version: string): Promise<string> {
   const semVerRegx =
     /^v(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$/;
   switch (version) {

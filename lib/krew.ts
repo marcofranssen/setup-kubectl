@@ -4,7 +4,7 @@ import * as tc from "@actions/tool-cache";
 import { mapOS, mapArch, download } from "./utils";
 import { exec } from "child_process";
 
-export async function setupKrew() {
+export async function setupKrew(plugins: string[]) {
   const osPlatform = platform();
   const osArch = arch();
   const p = mapOS(osPlatform);
@@ -27,8 +27,10 @@ export async function setupKrew() {
   }
 
   krewVersion = await installKrew(cachedPath, binary);
-
   core.setOutput("krew-version", krewVersion);
+
+  const installedPlugins = await installPlugins(cachedPath, binary, plugins);
+  core.setOutput("krew-plugins", JSON.stringify(installedPlugins));
 }
 
 function installKrew(cachedPath: string, binary: string): Promise<string> {
@@ -51,5 +53,37 @@ function installKrew(cachedPath: string, binary: string): Promise<string> {
         resolve(version || "latest");
       });
     });
+  });
+}
+
+function installPlugins(
+  cachedPath: string,
+  binary: string,
+  plugins: string[]
+): Promise<Record<string, string>[]> {
+  return new Promise((resolve, reject) => {
+    const krewBin = `${homedir()}/.krew/bin`;
+    const installed: Record<string, string>[] = [];
+
+    plugins.forEach((p) => {
+      core.info(`Attempting to install plugin: ${p}…`);
+      exec(`${krewBin}/kubectl-krew install ${p}`, (e) => {
+        if (e) {
+          return reject(e);
+        }
+
+        const pluginBin = `kubectl-${p.replace("-", "_")}`;
+        exec(`${krewBin}/${pluginBin} version`, (e, stdout) => {
+          if (e) {
+            installed.push({ [p]: "unknown" });
+          }
+
+          core.debug(stdout);
+          installed.push({ [p]: stdout });
+        });
+      });
+    });
+
+    resolve(installed);
   });
 }
