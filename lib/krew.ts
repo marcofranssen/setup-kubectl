@@ -2,7 +2,7 @@ import { platform, arch, homedir } from "os";
 import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
 import { mapOS, mapArch, download } from "./utils";
-import { exec, spawn } from "child_process";
+import { exec } from "child_process";
 
 export async function setupKrew() {
   const osPlatform = platform();
