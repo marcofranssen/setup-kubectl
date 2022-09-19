@@ -39,7 +39,7 @@ function installKrew(cachedPath: string, binary: string): Promise<string> {
         return reject(e);
       }
 
-      exec("kubectl krew version", (e, stdout) => {
+      exec(`${cachedPath}/${binary} krew version`, (e, stdout) => {
         if (e) {
           return resolve("latest");
         }
