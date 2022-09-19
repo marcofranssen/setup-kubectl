@@ -3,7 +3,6 @@ import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
 import { mapOS, mapArch, download } from "./utils";
 import { exec, spawn } from "child_process";
-import { rejects } from "assert";
 
 export async function setupKrew() {
   const osPlatform = platform();
