@@ -10,7 +10,7 @@ Installs the latest `stable` release.
 
 ```yaml
 steps:
-  - uses: marcofranssen/setup-kubectl@v0.1.0
+  - uses: marcofranssen/setup-kubectl@v0.3.0
     id: kubectl
   - run: echo ${{ steps.kubectl.output.kubectl-version }}
 ```
@@ -21,7 +21,7 @@ Installs the `latest` release.
 
 ```yaml
 steps:
-  - uses: marcofranssen/setup-kubectl@v0.1.0
+  - uses: marcofranssen/setup-kubectl@v0.3.0
     id: kubectl
     with:
       kubectl-version: latest
@@ -30,14 +30,14 @@ steps:
 
 ### Install specific version
 
-Installs the `v1.24.4` release.
+Installs the `v1.24.5` release.
 
 ```yaml
 steps:
-  - uses: marcofranssen/setup-kubectl@v0.1.0
+  - uses: marcofranssen/setup-kubectl@v0.3.0
     id: kubectl
     with:
-      kubectl-version: v1.24.4
+      kubectl-version: v1.24.5
 ```
 
 ### Install krew
@@ -46,7 +46,7 @@ Install `krew` allong with kubectl.
 
 ```yaml
 steps:
-  - uses: marcofranssen/setup-kubectl@v0.1.0
+  - uses: marcofranssen/setup-kubectl@v0.3.0
     with:
       enable-plugins: true
   - run: echo ${{ steps.kubectl.output.krew-version }}
@@ -59,7 +59,7 @@ Install `krew` allong with `kubectl` and some plugins.
 
 ```yaml
 steps:
-  - uses: marcofranssen/setup-kubectl@v0.1.0
+  - uses: marcofranssen/setup-kubectl@v0.3.0
     with:
       enable-plugins: true
       plugins: aws-auth,grep
