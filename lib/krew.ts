@@ -56,34 +56,40 @@ function installKrew(cachedPath: string, binary: string): Promise<string> {
   });
 }
 
-function installPlugins(
+async function installPlugins(
   cachedPath: string,
   binary: string,
   plugins: string[]
 ): Promise<Record<string, string>[]> {
-  return new Promise((resolve, reject) => {
-    const krewBin = `${homedir()}/.krew/bin`;
-    const installed: Record<string, string>[] = [];
+  const krewBin = `${homedir()}/.krew/bin`;
+  // parallel installs will not work, so we do have to await within the loop
+  const installed: Record<string, string>[] = [];
+  for (const plugin of plugins) {
+    installed.push(await installPlugin(krewBin, plugin));
+  }
+  return installed;
+}
 
-    plugins.forEach((p) => {
-      core.info(`Attempting to install plugin: ${p}…`);
-      exec(`${krewBin}/kubectl-krew install ${p}`, (e) => {
+function installPlugin(
+  krewBin: string,
+  plugin: string
+): Promise<Record<string, string>> {
+  return new Promise((resolve, reject) => {
+    core.info(`Attempting to install plugin: ${plugin}…`);
+    exec(`${krewBin}/kubectl-krew install ${plugin}`, (e) => {
+      if (e) {
+        return reject(e);
+      }
+
+      const pluginBin = `kubectl-${plugin.replace("-", "_")}`;
+      exec(`${krewBin}/${pluginBin} version`, (e, stdout) => {
         if (e) {
-          return reject(e);
+          resolve({ [plugin]: "unknown" });
         }
 
-        const pluginBin = `kubectl-${p.replace("-", "_")}`;
-        exec(`${krewBin}/${pluginBin} version`, (e, stdout) => {
-          if (e) {
-            installed.push({ [p]: "unknown" });
-          }
-
-          core.debug(stdout);
-          installed.push({ [p]: stdout });
-        });
+        core.debug(stdout);
+        resolve({ [plugin]: stdout });
       });
     });
-
-    resolve(installed);
   });
 }

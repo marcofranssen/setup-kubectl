@@ -82,9 +82,9 @@ jobs:
             hash kubectl-krew 2>/dev/null || { echo >&2 "kubectl-krew can not be found in the PATH."; exit 1; }
             echo "::notice::Installed krew ${KREW_VERSION} at $(which kubectl-krew)"
             ls -ahl /$HOME/.krew/bin
+            echo "::notice::Installed following plugins $KREW_PLUGINS"
             hash kubectl-aws_auth 2>/dev/null || { echo >&2 "aws-auth plugin can not be found in PATH."; exit 1; }
             hash kubectl-grep 2>/dev/null || { echo >&2 "grep plugin can not be found in PATH."; exit 1; }
-            echo "::notice::Installed following plugins $KREW_PLUGINS"
           } || true
         env:
           KUBECTL_VERSION: ${{ steps.setup-kubectl.outputs.kubectl-version }}
