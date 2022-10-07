@@ -8,37 +8,47 @@ import { mapOS, mapArch, download } from "./utils";
 import { setupKrew } from "./krew";
 
 export async function setupKubectl() {
-  const kubectlVersion = await getVersion(core.getInput("kubectlVersion"));
+  try {
+    const kubectlVersion = await getVersion(core.getInput("kubectlVersion"));
 
-  core.debug(`Installing kubectl ${kubectlVersion}…`);
+    core.debug(`Installing kubectl ${kubectlVersion}…`);
 
-  const osPlatform = platform();
-  const osArch = arch();
-  const p = mapOS(osPlatform);
-  const a = mapArch(osArch);
+    const osPlatform = platform();
+    const osArch = arch();
+    const p = mapOS(osPlatform);
+    const a = mapArch(osArch);
 
-  const downloadURL = `https://storage.googleapis.com/kubernetes-release/release/${kubectlVersion}/bin/${p}/${a}/kubectl`;
-  const checksumURL = `https://storage.googleapis.com/kubernetes-release/release/${kubectlVersion}/bin/${p}/${a}/kubectl.sha256`;
+    const downloadURL = `https://storage.googleapis.com/kubernetes-release/release/${kubectlVersion}/bin/${p}/${a}/kubectl`;
+    const checksumURL = `https://storage.googleapis.com/kubernetes-release/release/${kubectlVersion}/bin/${p}/${a}/kubectl.sha256`;
 
-  let cachedPath = tc.find("kubectl", kubectlVersion, osArch)
+    let cachedPath = tc.find("kubectl", kubectlVersion, osArch);
 
-  if (cachedPath) {
-    core.info(`Found kubectl ${kubectlVersion} in toolcache @ ${cachedPath}`);
-  } else {
-    core.info(`Attempting to download kubectl ${kubectlVersion}…`);
-    const pathToCLI = await download(downloadURL, checksumURL);
-    const dir = `${dirname(pathToCLI)}/kubectl-${kubectlVersion}`
-    await mkdir(dir, { recursive: true })
-    await rename(pathToCLI, `${dir}/kubectl`)
-    await chmod(`${dir}/kubectl`, 0o755)
-    cachedPath = await tc.cacheDir(`${dir}`, "kubectl", kubectlVersion, osArch)
-  }
+    if (cachedPath) {
+      core.info(`Found kubectl ${kubectlVersion} in toolcache @ ${cachedPath}`);
+    } else {
+      core.info(`Attempting to download kubectl ${kubectlVersion}…`);
+      const pathToCLI = await download(downloadURL, checksumURL);
+      const dir = `${dirname(pathToCLI)}/kubectl-${kubectlVersion}`;
+      await mkdir(dir, { recursive: true });
+      await rename(pathToCLI, `${dir}/kubectl`);
+      await chmod(`${dir}/kubectl`, 0o755);
+      cachedPath = await tc.cacheDir(
+        `${dir}`,
+        "kubectl",
+        kubectlVersion,
+        osArch
+      );
+    }
 
-  core.addPath(cachedPath);
-  core.setOutput("kubectl-version", kubectlVersion);
+    core.addPath(cachedPath);
+    core.setOutput("kubectl-version", kubectlVersion);
 
-  if (core.getInput("enablePlugins")) {
-    await setupKrew();
+    if (core.getInput("enablePlugins")) {
+      await setupKrew();
+    }
+  } catch (e) {
+    core.error(e as Error);
+    throw e;
   }
 }
 
