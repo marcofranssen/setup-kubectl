@@ -7,7 +7,7 @@
   "author": "Marco Franssen <marco.franssen@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "yarn build-main",
+    "build": "pnpm build-main",
     "build-main": "ncc build -m -s --license licenses.txt",
     "build:watch": "ncc build -m -s --license licenses.txt -w",
     "local-exec": "RUNNER_TEMP=.runner-temp RUNNER_TOOL_CACHE=.runner-cache INPUT_KUBECTLVERSION=stable INPUT_ENABLEPLUGINS=true node --enable-source-maps dist/index.js"
