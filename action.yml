@@ -28,5 +28,5 @@ outputs:
   krew-plugins:
     description: 'The list of installed plugins (json serialized object).'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
