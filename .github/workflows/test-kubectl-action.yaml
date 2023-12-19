@@ -43,7 +43,7 @@ jobs:
       matrix:
         # os: [ubuntu-22.04, macos-12, windows-2022]
         os: [ubuntu-22.04, macos-12]
-        version: [v1.23.12, v1.24.6, stable, latest]
+        version: [v1.26.11, v1.27.8, v1.28.4, v1.29.0, stable, latest]
         enablePlugins: [true, false]
 
     runs-on: ${{ matrix.os }}
