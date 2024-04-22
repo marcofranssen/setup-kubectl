@@ -22,8 +22,8 @@ importers:
         version: 3.3.2
     devDependencies:
       '@tsconfig/node20':
-        specifier: ^20.1.3
-        version: 20.1.3
+        specifier: ^20.1.4
+        version: 20.1.4
       '@types/node':
         specifier: ^20.12.7
         version: 20.12.7
@@ -174,8 +174,8 @@ packages:
   '@protobuf-ts/runtime@2.9.3':
     resolution: {integrity: sha512-nivzCpg/qYD0RX2OmHOahJALb8ndjGmUhNBcTJ0BbXoqKwCSM6vYA+vegzS3rhuaPgbyC7Ec8idlnizzUfIRuw==}
 
-  '@tsconfig/node20@20.1.3':
-    resolution: {integrity: sha512-XeWn6Gms5MaQWdj+C4fuxuo/Icy8ckh+BwAIijhX2LKRHHt1OuctLLLlB0F4EPi55m2IUJNTnv8FH9kSBI7Ogw==}
+  '@tsconfig/node20@20.1.4':
+    resolution: {integrity: sha512-sqgsT69YFeLWf5NtJ4Xq/xAF8p4ZQHlmGW74Nu2tD4+g5fAsposc4ZfaaPixVu4y01BEiDCWLRDCvDM5JOsRxg==}
 
   '@types/node-fetch@2.6.9':
     resolution: {integrity: sha512-bQVlnMLFJ2d35DkPNjEPmd9ueO/rh5EiaZt2bhqiSarPjZIuIV6bPQVqcrEyvNo+AfTrRGVazle1tl597w3gfA==}
@@ -919,7 +919,7 @@ snapshots:
 
   '@protobuf-ts/runtime@2.9.3': {}
 
-  '@tsconfig/node20@20.1.3': {}
+  '@tsconfig/node20@20.1.4': {}
 
   '@types/node-fetch@2.6.9':
     dependencies:
@@ -1328,13 +1328,14 @@ snapshots:
 
   twirp-ts@2.5.0(@protobuf-ts/plugin@2.9.3):
     dependencies:
-      '@protobuf-ts/plugin': 2.9.3
       '@protobuf-ts/plugin-framework': 2.9.3
       camel-case: 4.1.2
       dot-object: 2.1.4
       path-to-regexp: 6.2.1
       ts-poet: 4.15.0
       yaml: 1.10.2
+    optionalDependencies:
+      '@protobuf-ts/plugin': 2.9.3
 
   typescript@3.9.10: {}
 
