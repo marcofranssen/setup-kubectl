@@ -13,7 +13,7 @@
     "local-exec": "RUNNER_TEMP=.runner-temp RUNNER_TOOL_CACHE=.runner-cache INPUT_KUBECTLVERSION=stable INPUT_ENABLEPLUGINS=true node --enable-source-maps dist/index.js"
   },
   "dependencies": {
-    "@actions/artifact": "^2.1.7",
+    "@actions/artifact": "^2.1.8",
     "@actions/core": "^1.10.1",
     "@actions/tool-cache": "^2.0.1",
     "node-fetch": "^3.3.2"
