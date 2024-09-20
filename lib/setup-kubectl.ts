@@ -19,15 +19,15 @@ export async function setupKubectl() {
     const p = mapOS(osPlatform);
     const a = mapArch(osArch);
 
-    const downloadURL = `https://storage.googleapis.com/kubernetes-release/release/${kubectlVersion}/bin/${p}/${a}/kubectl`;
-    const checksumURL = `https://storage.googleapis.com/kubernetes-release/release/${kubectlVersion}/bin/${p}/${a}/kubectl.sha256`;
+    const downloadURL = `https://dl.k8s.io/release/${kubectlVersion}/bin/${p}/${a}/kubectl`;
+    const checksumURL = `https://dl.k8s.io/release/${kubectlVersion}/bin/${p}/${a}/kubectl.sha256`;
 
     let cachedPath = tc.find("kubectl", kubectlVersion, osArch);
 
     if (cachedPath) {
       core.info(`Found kubectl ${kubectlVersion} in toolcache @ ${cachedPath}`);
     } else {
-      core.info(`Attempting to download kubectl ${kubectlVersion}…`);
+      core.info(`Attempting to download kubectl ${kubectlVersion} from ${downloadURL}…`);
       const pathToCLI = await download(downloadURL, checksumURL);
       const dir = `${dirname(pathToCLI)}/kubectl-${kubectlVersion}`;
       await mkdir(dir, { recursive: true });
