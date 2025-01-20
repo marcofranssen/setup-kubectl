@@ -15,7 +15,7 @@
   "dependencies": {
     "@actions/artifact": "^2.2.1",
     "@actions/core": "^1.11.1",
-    "@actions/tool-cache": "^2.0.1",
+    "@actions/tool-cache": "^2.0.2",
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
