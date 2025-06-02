@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@actions/artifact':
         specifier: ^2.3.1
-        version: 2.3.1
+        version: 2.3.2
       '@actions/core':
         specifier: ^1.11.1
         version: 1.11.1
@@ -25,8 +25,8 @@ importers:
         specifier: ^20.1.5
         version: 20.1.5
       '@types/node':
-        specifier: ^22.15.17
-        version: 22.15.17
+        specifier: ^22.15.29
+        version: 22.15.29
       '@vercel/ncc':
         specifier: ^0.38.3
         version: 0.38.3
@@ -36,8 +36,8 @@ importers:
 
 packages:
 
-  '@actions/artifact@2.3.1':
-    resolution: {integrity: sha512-3uW25BNAqbMBcasNK+DX4I0Vl8aQdo65K6DRufJiNYjqfhSMfeRE4YGjWLaKmF+H+7bp1ADlQ5NksC61fpvYbQ==}
+  '@actions/artifact@2.3.2':
+    resolution: {integrity: sha512-uX2Mr5KEPcwnzqa0Og9wOTEKIae6C/yx9P/m8bIglzCS5nZDkcQC/zRWjjoEsyVecL6oQpBx5BuqQj/yuVm0gw==}
 
   '@actions/core@1.11.1':
     resolution: {integrity: sha512-hXJCSrkwfA46Vd9Z3q4cpEpHB1rL5NG04+/rbqW9d3+CSvtB1tYe8UTpAlixa1vj0m/ULglfEK2UKxMGxCxv5A==}
@@ -192,8 +192,8 @@ packages:
   '@tsconfig/node20@20.1.5':
     resolution: {integrity: sha512-Vm8e3WxDTqMGPU4GATF9keQAIy1Drd7bPwlgzKJnZtoOsTm1tduUTbDjg0W5qERvGuxPI2h9RbMufH0YdfBylA==}
 
-  '@types/node@22.15.17':
-    resolution: {integrity: sha512-wIX2aSZL5FE+MR0JlvF87BNVrtFWf6AE6rxSE9X7OwnVvoyCQjpzSRJ+M87se/4QCkCiebQAqrJ0y6fwIyi7nw==}
+  '@types/node@22.15.29':
+    resolution: {integrity: sha512-LNdjOkUDlU1RZb8e1kOIUpN1qQUlzGkEtbVNo53vbrwDg5om6oduhm4SiUaPW5ASTXhAiP0jInWG8Qx9fVlOeQ==}
 
   '@vercel/ncc@0.38.3':
     resolution: {integrity: sha512-rnK6hJBS6mwc+Bkab+PGPs9OiS0i/3kdTO+CkI8V0/VrW3vmz7O2Pxjw/owOlmo6PKEIxRSeZKv/kuL9itnpYA==}
@@ -612,7 +612,7 @@ packages:
 
 snapshots:
 
-  '@actions/artifact@2.3.1':
+  '@actions/artifact@2.3.2':
     dependencies:
       '@actions/core': 1.11.1
       '@actions/github': 5.1.1
@@ -880,7 +880,7 @@ snapshots:
 
   '@tsconfig/node20@20.1.5': {}
 
-  '@types/node@22.15.17':
+  '@types/node@22.15.29':
     dependencies:
       undici-types: 6.21.0
 
