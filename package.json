@@ -11,11 +11,6 @@
     "build:watch": "tsup --watch",
     "local-exec": "RUNNER_TEMP=.runner-temp RUNNER_TOOL_CACHE=.runner-cache INPUT_KUBECTLVERSION=stable INPUT_ENABLEPLUGINS=true node --enable-source-maps dist/index.js"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
-  },
   "dependencies": {
     "@actions/artifact": "^6.2.1",
     "@actions/core": "^3.0.1",
@@ -23,7 +18,7 @@
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
-    "@tsconfig/node20": "^20.1.9",
+    "@tsconfig/node24": "^24.0.4",
     "@types/node": "^25.9.2",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3"
